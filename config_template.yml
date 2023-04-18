@@ -1,0 +1,47 @@
+credentials:
+  simcompanies:
+    email: email
+    password: password
+  slack:
+    token: token
+    channel: channel
+  url: url
+  
+data:
+  water:
+    prod_level: 0
+    location:
+    - 1
+    level:
+    - 2
+  seeds:
+    prod_level: 0
+    location:
+    - 2
+    level:
+    - 1
+  sugarcane:
+    prod_level: 0
+    location:
+    - 3
+    level:
+    - 2
+  ethanol:
+    prod_level: 1
+    location:
+    - 4
+    level:
+    - 1
+  eth: 4
+  
+location:
+  1: css-xkckvn
+  2: css-izd89d
+  3: css-slm3ve
+  4: css-1xjjvhq
+  5: css-1ks8fbu
+  6: css-g6kxpx
+  7: css-hw7sul
+  8: css-1lvx906
+  9: css-1k98qjv
+  10: css-23zopr
