@@ -15,23 +15,22 @@ class SC():
     #####--- INIT ---#####
     
     def __init__(self):
-
-        ##### cst #####         
+        
+        ##### cst #####       
         with open("config.yml", "r") as f:
             self.config = yaml.load(f, Loader=yaml.FullLoader)
             
         self.credentials = self.config['credentials']
         self.client = slack_sdk.WebClient(token=self.credentials['slack']['token'])
-        #####     ######
-        
+
         ### init + options of driver ###
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-ssl-errors=yes')
         options.add_argument('--ignore-certificate-errors')
         self.driver = webdriver.Remote(command_executor=self.credentials['url'],options=options)
-
-        ### get to the page ###
-        self.driver.get("https://www.simcompanies.com/fr/")
+ 
+        ### get to the page ### 
+        self.driver.get("https://www.simcompanies.com/landscape/")
         self.login()
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'test-exchange.css-1iai8pv.eofzx9a4')))
         
@@ -63,28 +62,16 @@ class SC():
         driver = self.driver
         #####     ######
         
-        if not hasattr(A, 'inventory'):
-            self.fetch_inventory()
         inventory = self.inventory
-            
-        if hasattr(A,'eta') and (datetime.datetime.now() - self.eta).total_seconds() < 600 and hasattr(A,'calc'):
-            D = {'ethanol' : [eth,0,0], 
-                 'energy' : [0,self.calc['energy'][1],0], 
-                 'transport' : [0,self.calc['transport'][1],0],
-                 'sugarcane' : [0,0,0],
-                 'water' : [0,0,0],
-                 'seeds' : [0,0,0]
-                }
-        else:
-            self.eta = datetime.datetime.now()
-            D = {'ethanol' : [eth,0,0], 
-                 'energy' : [0,self.fetch(63),0], 
-                 'transport' : [0,self.fetch(103),0],
-                 'sugarcane' : [0,0,0],
-                 'water' : [0,0,0],
-                 'seeds' : [0,0,0]
-                }
-        #####     ######
+        self.eta = datetime.datetime.now()
+        
+        D = {'ethanol' : [eth,0,0], 
+             'energy' : [0,self.fetch(63),0], 
+             'transport' : [0,self.fetch(103),0],
+             'sugarcane' : [0,0,0],
+             'water' : [0,0,0],
+             'seeds' : [0,0,0]
+            }
         
         ##### production #
           
@@ -166,8 +153,6 @@ class SC():
         if eth == 0 or self.wait_time != 0: 
             return
         
-        if not hasattr(A, 'inventory'):
-            self.fetch_inventory()
         inventory = self.inventory
         
         #####    ######
@@ -318,7 +303,7 @@ class SC():
         #####     ######
         
         try:
-            WebDriverWait(A.driver, 10).until(EC.presence_of_element_located((By.ID, 'menu-map'))).click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'menu-map'))).click()
             WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'anim-swipein.css-1uc9yyw'))).click()
             WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-1fq0e5y.btn.btn-primary'))).click()
         except:
@@ -385,7 +370,7 @@ class SC():
         try:
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'menu-map'))).click()
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, class_name))).click()
-            time = 60 + (datetime.datetime.strptime( WebDriverWait(A.driver, 1.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'mt20'))).text[13:], '%d/%m/%Y %H:%M') - datetime.datetime.now() ).seconds
+            time = 60 + (datetime.datetime.strptime( WebDriverWait(driver, 1.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'mt20'))).text[13:], '%d/%m/%Y %H:%M') - datetime.datetime.now() ).seconds
             time = time%86400
             if self.wait_time < time:   
                 self.wait_time = time
@@ -433,4 +418,4 @@ class SC():
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'css-1fq0e5y.btn.btn-primary'))).click()
             client.chat_postMessage(channel=slack_channel, text=f"Sell {self.inventory['ethanol'][0]} :ethanol: for {price}")
             
-            client.chat_postMessage(channel=slack_channel, text="----------------------------------------------")    
+            client.chat_postMessage(channel=slack_channel, text="----------------------------------------------")
